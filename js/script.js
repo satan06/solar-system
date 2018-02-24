@@ -1,6 +1,6 @@
 var container;
 var camera, scene, renderer, light;
-var x = 0; y = 0, deg = 0;
+var x = 0; y = 0, deg = 0, param = 0;
 var light_year_control = 0.3;
 
 var planets = new Array();
@@ -95,7 +95,7 @@ function init()
 		{
 			this.sphere.rotation.y += this.self_period;
 		},
-		WorldOrbitMove: function(x = 0, y = 0, z = 0)
+		WorldOrbitMove: function()
 		{
 
 			this.sphere.position.x = Math.sin(deg * this.world_period) * this.world_radius;
@@ -108,10 +108,9 @@ function init()
 
    			tracer.geometry = new THREE.Geometry(),
     		tracer.material = new THREE.LineDashedMaterial({ color: 0x606257, dashSize:
-			100, gapSize: 50});
+			100, gapSize: 50 });
 
-    		for(var i = 0; i <= 500; i++) 
-    		{
+    		for(var i = 0; i <= 500; i++) {
     			var vector = new THREE.Vector3(Math.sin(Math.PI / 180 * i) * this.world_radius, 0,
       									Math.cos(Math.PI / 180 * i) * this.world_radius);
      			tracer.geometry.vertices.push(vector);
@@ -121,13 +120,13 @@ function init()
 		}
 	}
 	planets.push(new Planet(830, 0, 0.001, 0, 0, 'pic/sun/diffuse.jpg')); //Sun
-	planets.push(new Planet(64, 2000, 0.001, 0.1, 1500, 'pic/earth/diffuse.jpg', 'pic/earth/bump.jpg')); //Earth
+	planets.push(new Planet(64, 2000, 0.001, 0.1, 2200, 'pic/earth/diffuse.jpg', 'pic/earth/bump.jpg')); //Earth
 	planets.push(new Planet(300, 5520, 0.0004, 0.021, 5020, 'pic/jupiter/diffuse.jpg')); //Jupiter
 	planets.push(new Planet(90, 6820, 0.0007, 0.001, 6520, 'pic/uranus/diffuse.jpg')); //Uranus
 	planets.push(new Planet(80, 7220, 0.0006, 0.0005, 7020, 'pic/neptune/diffuse.jpg')); //Neptune
 	planets.push(new Planet(60, 1700, 0.007, 0.2, 1700, 'pic/venus/diffuse.jpg','pic/venus/bump.jpg')); //Venus
-	planets.push(new Planet(33, 2500, 0.007, 0.1, 2500, 'pic/mars/diffuse.jpg', 'pic/mars/bump.jpg')); //Mars
-	planets.push(new Planet(24, 1000, 0.5, 0.3, 1700, 'pic/mercury/diffuse.jpg', 'pic/mercury/bump.jpg')); //Mercury
+	planets.push(new Planet(33, 2500, 0.007, 0.1, 2600, 'pic/mars/diffuse.jpg', 'pic/mars/bump.jpg')); //Mars
+	planets.push(new Planet(24, 1000, 0.5, 0.3, 1200, 'pic/mercury/diffuse.jpg', 'pic/mercury/bump.jpg')); //Mercury
 
 
 	
@@ -143,10 +142,42 @@ function simulate()
 		planets[i].SelfOrbitMove();
 		planets[i].WorldOrbitMove();
 	}
-	camera.lookAt(x, y, 0);
-	camera.position.x = Math.sin(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
-	camera.position.z = Math.cos(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
-	deg += Math.PI / 180 * 2 * light_year_control;	
+}
+
+function planet_tracking(param)
+{
+	if (param == 0) {
+		camera.lookAt(x, y, 0);
+		camera.position.x = Math.sin(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
+		camera.position.z = Math.cos(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
+		deg += Math.PI / 180 * 2 * light_year_control;	
+	} else {
+		camera.lookAt(planets[param].sphere.position.x + x, y, planets[param].sphere.position.z);
+		camera.position.x = Math.sin(deg * planets[param].world_period) * planets[param].world_radius + 1000;
+		camera.position.z = Math.cos(deg * planets[param].world_period) * planets[param].world_radius + 1000;
+		deg += Math.PI / 180 * 2 * light_year_control;				
+	}
+}
+
+onkeypress = function(event)
+{
+	if(event.code == "Digit0") {
+		param = 0;
+	} else if (event.code == "Digit1") {
+		param = 1;
+	} else if (event.code == "Digit2") {
+		param = 2;
+	} else if (event.code == "Digit3") {
+		param = 3;
+	} else if (event.code == "Digit4") {
+		param = 4;
+	} else if (event.code == "Digit5") {
+		param = 5;
+	} else if (event.code == "Digit6") {
+		param = 6;
+	} else if (event.code == "Digit7") {
+		param = 7;
+	} 
 }
 
 function onWindowResize()
@@ -159,6 +190,7 @@ function onWindowResize()
 function animate()
 {
 	requestAnimationFrame(animate);
+	planet_tracking(param);
 	simulate();
 	render();
 }
