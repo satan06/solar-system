@@ -2,7 +2,6 @@ var container;
 var camera, scene, renderer, light;
 var x = 0; y = 0, deg = 0;
 var light_year_control = 0.3;
-var srings;
 
 var planets = new Array();
 
@@ -96,8 +95,9 @@ function init()
 		{
 			this.sphere.rotation.y += this.self_period;
 		},
-		WorldOrbitMove: function()
+		WorldOrbitMove: function(x = 0, y = 0, z = 0)
 		{
+
 			this.sphere.position.x = Math.sin(deg * this.world_period) * this.world_radius;
 			this.sphere.position.z = Math.cos(deg * this.world_period) * this.world_radius;
 			deg += Math.PI / 180 * 2 * light_year_control;
@@ -129,9 +129,11 @@ function init()
 	planets.push(new Planet(33, 2500, 0.007, 0.1, 2500, 'pic/mars/diffuse.jpg', 'pic/mars/bump.jpg')); //Mars
 	planets.push(new Planet(24, 1000, 0.5, 0.3, 1700, 'pic/mercury/diffuse.jpg', 'pic/mercury/bump.jpg')); //Mercury
 
+
+	
 	for (var i = planets.length - 1; i >= 0; i--) {
 		planets[i].Create();	
-		planets[i].OrbitLineGenerate();
+		//planets[i].OrbitLineGenerate();
 	}
 }
 
@@ -141,6 +143,10 @@ function simulate()
 		planets[i].SelfOrbitMove();
 		planets[i].WorldOrbitMove();
 	}
+	camera.lookAt(x, y, 0);
+	camera.position.x = Math.sin(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
+	camera.position.z = Math.cos(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
+	deg += Math.PI / 180 * 2 * light_year_control;	
 }
 
 function onWindowResize()
@@ -152,8 +158,6 @@ function onWindowResize()
 
 function animate()
 {
-	camera.position.y = y;
-	camera.position.x = x * 0.6;
 	requestAnimationFrame(animate);
 	simulate();
 	render();
