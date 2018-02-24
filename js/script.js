@@ -38,7 +38,7 @@ function init()
   	light.shadow.mapSize.height = 2048;
   	scene.add(light);
 
-  	var amb_light = new THREE.HemisphereLight(0xFFFFFF, 0x000000, 0.3);
+  	var amb_light = new THREE.HemisphereLight(0xFFFFFF, 0x000000, 0.1);
 	scene.add(amb_light);
 
   	var stars_geometry = new THREE.Geometry();
