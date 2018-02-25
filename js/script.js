@@ -2,6 +2,7 @@ var container;
 var camera, scene, renderer, light;
 var x = 0; y = 0, deg = 0, param = 0;
 var light_year_control = 0.3;
+var satr;
 
 var planets = new Array();
 
@@ -126,13 +127,34 @@ function init()
 	planets.push(new Planet(60, 1700, 0.007, 0.2, 1700, 'pic/venus/diffuse.jpg','pic/venus/bump.jpg')); //Venus
 	planets.push(new Planet(33, 2500, 0.007, 0.1, 2600, 'pic/mars/diffuse.jpg', 'pic/mars/bump.jpg')); //Mars
 	planets.push(new Planet(24, 1000, 0.5, 0.3, 1200, 'pic/mercury/diffuse.jpg', 'pic/mercury/bump.jpg')); //Mercury
-
-
+	planets.push(new Planet(150, 5900, 0.001, 0.0025, 5900, 'pic/saturn/diffuse.jpg')); //Saturn
 	
 	for (var i = planets.length - 1; i >= 0; i--) {
 		planets[i].Create();	
 		//planets[i].OrbitLineGenerate();
 	}
+
+  	var satr_geometry = new THREE.Geometry();
+  	var satr_mat = new THREE.PointsMaterial({
+  		color: 0x2C2B27,
+  		opacity: 0.3, 
+  		size: 1
+  	});
+
+  	for (var i = 0; i < 10000; i++)
+  	{
+  		var vertex = new THREE.Vector3();
+  		vertex.x = Math.sin(Math.PI / 180 * i) * (350 - i / 180);
+  		vertex.y = THREE.Math.randFloatSpread(15);
+  		vertex.z = Math.cos(Math.PI / 180 * i) * (350 - i / 180);
+  		satr_geometry.vertices.push(vertex);
+  	}
+
+  	satr = new THREE.Points(satr_geometry, satr_mat);
+  	satr.rotation.z = -Math.PI / 10;
+  	satr.rotation.x = -Math.PI / 10;
+  	scene.add(satr); 
+
 }
 
 function simulate()
@@ -141,14 +163,17 @@ function simulate()
 		planets[i].SelfOrbitMove();
 		planets[i].WorldOrbitMove();
 	}
+	satr.position.x = planets[8].sphere.position.x;
+	satr.position.z = planets[8].sphere.position.z;
+	satr.rotation.y -= 0.0002;
 }
 
 function planet_tracking(param)
 {
 	if (param == 0) {
 		camera.lookAt(x, y, 0);
-		camera.position.x = Math.sin(deg * planets[3].world_period * 2) * (planets[3].world_radius + 4000);
-		camera.position.z = Math.cos(deg * planets[3].world_period * 2) * (planets[3].world_radius + 4000);
+		camera.position.x = Math.sin(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
+		camera.position.z = Math.cos(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
 		deg += Math.PI / 180 * 2 * light_year_control;	
 	} else {
 		camera.lookAt(planets[param].sphere.position.x + x, y, planets[param].sphere.position.z);
@@ -176,7 +201,9 @@ onkeypress = function(event)
 		param = 6;
 	} else if (event.code == "Digit7") {
 		param = 7;
-	} 
+	} else if (event.code == "Digit8") {
+		param = 8;
+	}  
 }
 
 function onWindowResize()
