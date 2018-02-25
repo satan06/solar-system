@@ -140,11 +140,12 @@ function init()
 		map: texture,
 		side: THREE.DoubleSide,
 		transparent: true, 
-		opacity: 0.6
+		opacity: 0.5
 	});
 	circle = new THREE.Mesh(geometry, material);
 	circle.rotation.x = -Math.PI / 5;
 	circle.rotation.z = -Math.PI / 10;
+	circle.castShadow = true;
 	scene.add(circle);
 }
 
@@ -156,6 +157,7 @@ function simulate()
 	}
 	circle.position.x = planets[8].sphere.position.x;
 	circle.position.z = planets[8].sphere.position.z;
+	circle.rotation.y -= 0.0003;
 }
 
 function planet_tracking(param)
