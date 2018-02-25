@@ -2,7 +2,7 @@ var container;
 var camera, scene, renderer, light;
 var x = 0; y = 0, deg = 0, param = 0;
 var light_year_control = 0.3;
-var satr;
+var circle;
 
 var planets = new Array();
 
@@ -127,34 +127,25 @@ function init()
 	planets.push(new Planet(60, 1700, 0.007, 0.2, 1700, 'pic/venus/diffuse.jpg','pic/venus/bump.jpg')); //Venus
 	planets.push(new Planet(33, 2500, 0.007, 0.1, 2600, 'pic/mars/diffuse.jpg', 'pic/mars/bump.jpg')); //Mars
 	planets.push(new Planet(24, 1000, 0.5, 0.3, 1200, 'pic/mercury/diffuse.jpg', 'pic/mercury/bump.jpg')); //Mercury
-	planets.push(new Planet(150, 5900, 0.001, 0.0025, 5900, 'pic/saturn/diffuse.jpg')); //Saturn
+	planets.push(new Planet(150, 6100, 0.001, 0.0025, 6100, 'pic/saturn/diffuse.jpg')); //Saturn
 	
 	for (var i = planets.length - 1; i >= 0; i--) {
 		planets[i].Create();	
 		//planets[i].OrbitLineGenerate();
 	}
 
-  	var satr_geometry = new THREE.Geometry();
-  	var satr_mat = new THREE.PointsMaterial({
-  		color: 0x2C2B27,
-  		opacity: 0.3, 
-  		size: 1
-  	});
-
-  	for (var i = 0; i < 10000; i++)
-  	{
-  		var vertex = new THREE.Vector3();
-  		vertex.x = Math.sin(Math.PI / 180 * i) * (350 - i / 180);
-  		vertex.y = THREE.Math.randFloatSpread(15);
-  		vertex.z = Math.cos(Math.PI / 180 * i) * (350 - i / 180);
-  		satr_geometry.vertices.push(vertex);
-  	}
-
-  	satr = new THREE.Points(satr_geometry, satr_mat);
-  	satr.rotation.z = -Math.PI / 10;
-  	satr.rotation.x = -Math.PI / 10;
-  	scene.add(satr); 
-
+  	var geometry = new THREE.CircleGeometry(320, 32);
+	var texture = new THREE.TextureLoader().load('pic/saturn/rings_alpha.png');
+	var material = new THREE.MeshLambertMaterial({ 
+		map: texture,
+		side: THREE.DoubleSide,
+		transparent: true, 
+		opacity: 0.6
+	});
+	circle = new THREE.Mesh(geometry, material);
+	circle.rotation.x = -Math.PI / 5;
+	circle.rotation.z = -Math.PI / 10;
+	scene.add(circle);
 }
 
 function simulate()
@@ -163,9 +154,8 @@ function simulate()
 		planets[i].SelfOrbitMove();
 		planets[i].WorldOrbitMove();
 	}
-	satr.position.x = planets[8].sphere.position.x;
-	satr.position.z = planets[8].sphere.position.z;
-	satr.rotation.y -= 0.0002;
+	circle.position.x = planets[8].sphere.position.x;
+	circle.position.z = planets[8].sphere.position.z;
 }
 
 function planet_tracking(param)
