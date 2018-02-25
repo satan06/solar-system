@@ -107,8 +107,7 @@ function init()
 			var tracer = new THREE.Line;
 
    			tracer.geometry = new THREE.Geometry(),
-    		tracer.material = new THREE.LineDashedMaterial({ color: 0x606257, dashSize:
-			100, gapSize: 50 });
+    		tracer.material = new THREE.LineBasicMaterial({ color: 0x606257 });
 
     		for(var i = 0; i <= 500; i++) {
     			var vector = new THREE.Vector3(Math.sin(Math.PI / 180 * i) * this.world_radius, 0,
@@ -148,8 +147,8 @@ function planet_tracking(param)
 {
 	if (param == 0) {
 		camera.lookAt(x, y, 0);
-		camera.position.x = Math.sin(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
-		camera.position.z = Math.cos(deg * planets[3].world_period * 4) * planets[3].world_radius + 4000;
+		camera.position.x = Math.sin(deg * planets[3].world_period * 2) * (planets[3].world_radius + 4000);
+		camera.position.z = Math.cos(deg * planets[3].world_period * 2) * (planets[3].world_radius + 4000);
 		deg += Math.PI / 180 * 2 * light_year_control;	
 	} else {
 		camera.lookAt(planets[param].sphere.position.x + x, y, planets[param].sphere.position.z);
