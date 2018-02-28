@@ -96,12 +96,20 @@ function init()
 		{
 			this.sphere.rotation.y += this.self_period;
 		},
-		WorldOrbitMove: function()
+		WorldOrbitMove: function(IsMoon)
 		{
-
-			this.sphere.position.x = Math.sin(deg * this.world_period) * this.world_radius;
-			this.sphere.position.z = Math.cos(deg * this.world_period) * this.world_radius;
-			deg += Math.PI / 180 * 2 * light_year_control;
+			if(IsMoon)
+			{
+				this.sphere.position.x = (Math.sin(deg * this.world_period) * this.world_radius) + planets[1].sphere.position.x;
+				this.sphere.position.z = (Math.cos(deg * this.world_period) * this.world_radius) + planets[1].sphere.position.z;
+				deg += Math.PI / 180 * 2 * light_year_control;
+			}
+			else
+			{
+				this.sphere.position.x = Math.sin(deg * this.world_period) * this.world_radius;
+				this.sphere.position.z = Math.cos(deg * this.world_period) * this.world_radius;
+				deg += Math.PI / 180 * 2 * light_year_control;
+			}
 		},
 		OrbitLineGenerate: function()
 		{
@@ -128,6 +136,7 @@ function init()
 	planets.push(new Planet(33, 2500, 0.007, 0.1, 2600, 'pic/mars/diffuse.jpg', 'pic/mars/bump.jpg')); //Mars
 	planets.push(new Planet(24, 1000, 0.5, 0.3, 1200, 'pic/mercury/diffuse.jpg', 'pic/mercury/bump.jpg')); //Mercury
 	planets.push(new Planet(150, 6100, 0.001, 0.0025, 6100, 'pic/saturn/diffuse.jpg')); //Saturn
+	planets.push(new Planet(12.8, 200, 0.5, 0.5, 200, 'pic/moon/diffuse.jpg', 'pic/moon/bump.jpg')); //Moon
 	
 	for (var i = planets.length - 1; i >= 0; i--) {
 		planets[i].Create();	
@@ -151,13 +160,15 @@ function init()
 
 function simulate()
 {
-	for (var i = planets.length - 1; i >= 0; i--) {
+	for (var i = planets.length - 2; i >= 0; i--) {
 		planets[i].SelfOrbitMove();
-		planets[i].WorldOrbitMove();
+		planets[i].WorldOrbitMove(false);
 	}
+	planets[9].SelfOrbitMove();
+	planets[9].WorldOrbitMove(true);
 	circle.position.x = planets[8].sphere.position.x;
 	circle.position.z = planets[8].sphere.position.z;
-	circle.rotation.y -= 0.0003;
+	circle.rotation.y -= 0.001;
 }
 
 function planet_tracking(param)
@@ -195,7 +206,9 @@ onkeypress = function(event)
 		param = 7;
 	} else if (event.code == "Digit8") {
 		param = 8;
-	}  
+	} else if (event.code == "Digit9") {
+		param = 9;
+	} 
 }
 
 function onWindowResize()
